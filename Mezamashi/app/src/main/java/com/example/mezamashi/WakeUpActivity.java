@@ -20,6 +20,7 @@ import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
+import android.widget.TextView;
 
 // 参考 https://github.com/hiroaki-dev/AlarmSample/blob/master/app/src/main/java/me/hiroaki/alarmsample/PlaySoundActivity.java
 
@@ -37,6 +38,8 @@ public class WakeUpActivity extends AppCompatActivity implements SensorEventList
 
     private SensorManager mSensorManager;
     private Sensor mAccelerometer;
+
+    private TextView mComment, mLeftCount;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,6 +67,10 @@ public class WakeUpActivity extends AppCompatActivity implements SensorEventList
         SensorManager sensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
         Sensor accelerationSensor = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
         sensorManager.registerListener(this, accelerationSensor, SensorManager.SENSOR_DELAY_UI);
+
+        mLeftCount = (TextView) findViewById(R.id.left_count);
+        mComment = (TextView) findViewById(R.id.comment);
+
         if (shaked == false) {
             stopBtn.setEnabled(false);
         }
@@ -102,8 +109,17 @@ public class WakeUpActivity extends AppCompatActivity implements SensorEventList
 //        Log.d("mezamashi", String.valueOf(mShakeCount));
         if (mShakeCount > SHAKE_MAX_COUNT && shaked == false) {
             shaked = true;
-            stopBtn.setEnabled(shaked);
+            stopBtn.setEnabled(true);
         }
+        float progress = (float) (mShakeCount / SHAKE_MAX_COUNT);
+        mLeftCount.setText("残り" + String.valueOf(Math.max(SHAKE_MAX_COUNT - mShakeCount,0)) + "回だよ！");
+        if (mShakeCount == 0) {
+            mComment.setText(String.valueOf(SHAKE_MAX_COUNT) + "回振って目覚ましを止めよう!");
+        }else if(progress>=1.0) mComment.setText("おつかれさま，とめていいよ！");
+            else if (progress > 0.8) mComment.setText("もうちょっとだよ，振って振って!");
+        else if (progress > 0.5) mComment.setText("やっと半分，まだまだ振って!");
+        else if (progress > 0.3) mComment.setText("振りはじめたばかりだね，がんばって！");
+        else mComment.setText("アラームをとめるには振るしかないよ！");
     }
 
     @Override
