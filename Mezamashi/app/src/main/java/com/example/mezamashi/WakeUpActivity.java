@@ -111,7 +111,8 @@ public class WakeUpActivity extends AppCompatActivity implements SensorEventList
             shaked = true;
             stopBtn.setEnabled(true);
         }
-        float progress = (float) (mShakeCount / SHAKE_MAX_COUNT);
+        float progress = (float) ((float)mShakeCount / (float) SHAKE_MAX_COUNT);
+        Log.d("shake",String.valueOf(progress));
         mLeftCount.setText("残り" + String.valueOf(Math.max(SHAKE_MAX_COUNT - mShakeCount,0)) + "回だよ！");
         if (mShakeCount == 0) {
             mComment.setText(String.valueOf(SHAKE_MAX_COUNT) + "回振って目覚ましを止めよう!");
